@@ -2,7 +2,7 @@ require("RPostgreSQL")
 drv <- drv <- dbDriver("PostgreSQL")
 con <- dbConnect(drv,dbname="cognicity",host="localhost")
 
-max_distance <- c(330,330,330,330)
+max_depth <- c(330,330,330,330)
 
 for (sensor_id in 1:4) {
   df_all <- dbGetQuery(con,paste("SELECT * FROM sensor_data WHERE sensor_id=",toString(sensor_id)," ORDER BY measurement_time;",sep=""))
@@ -23,13 +23,13 @@ for (sensor_id in 1:4) {
   par(cex.axis=1.5,cex.lab=1.5,cex.main=1.5)
   plot(df_all$measurement_time[df_all$humidity!=0],df_all$humidity[df_all$humidity!=0],ylim=c(0,100),xlab="time",ylab="humidityxx",col="blue")
   dev.off()
-  png(filename=paste(toString(sensor_id),"_distance.png",sep=""),type="quartz",width=1024,height=768)
+  png(filename=paste(toString(sensor_id),"_depth.png",sep=""),type="quartz",width=1024,height=768)
   par(cex.axis=1.5,cex.lab=1.5,cex.main=1.5)
-  plot(df_all$measurement_time,metadata$height_above_riverbed[1]-df_all$distance,xlab="time",ylab="distance",col="forestgreen")
+  plot(df_all$measurement_time,metadata$height_above_riverbed[1]-df_all$depth,xlab="time",ylab="depth",col="forestgreen")
   dev.off()
-  df_all_distance_filtered <- dbGetQuery(con,paste("SELECT * FROM sensor_data WHERE sensor_id=",toString(sensor_id)," AND distance < ", toString(max_distance[sensor_id])," ORDER BY measurement_time;",sep=""))
-  png(filename=paste(toString(sensor_id),"_distance_filtered.png",sep=""),type="quartz",width=1024,height=768)
+  df_all_depth_filtered <- dbGetQuery(con,paste("SELECT * FROM sensor_data WHERE sensor_id=",toString(sensor_id)," AND depth < ", toString(max_depth[sensor_id])," ORDER BY measurement_time;",sep=""))
+  png(filename=paste(toString(sensor_id),"_depth_filtered.png",sep=""),type="quartz",width=1024,height=768)
   par(cex.axis=1.5,cex.lab=1.5,cex.main=1.5)
-  plot(df_all_filtered$measurement_time,metadata$height_above_riverbed[1]-df_all_filtered$distance,xlab="time",ylab="distance",col="forestgreen")
+  plot(df_all_filtered$measurement_time,metadata$height_above_riverbed[1]-df_all_filtered$depth,xlab="time",ylab="depth",col="forestgreen")
   dev.off()
 }
